@@ -6,7 +6,7 @@ namespace TodoApi.Dtos;
 public class CreateTodoDto
 {
     [Required(ErrorMessage ="Title is required")]
-    [MaxLength(50,ErrorMessage ="Title must be at most 50 characters only")]
+    [MaxLength(100,ErrorMessage ="Title must be at most 100 characters only")]
     public string Title { get; set; } = string.Empty;
 
     [MaxLength(1000, ErrorMessage = "Description must be at most 1000 characters only")]

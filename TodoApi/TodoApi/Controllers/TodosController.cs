@@ -18,7 +18,7 @@ public class TodosController : ControllerBase
 
 
     [HttpGet]
-    public async Task<ActionResult<TodoDto>> GetTodos()
+    public async Task<ActionResult<IEnumerable<TodoDto>>> GetTodos()
     {
         return Ok( await _todoRepository.GetAllTodosAsync());
     }
@@ -27,7 +27,7 @@ public class TodosController : ControllerBase
     public async Task<ActionResult<TodoDto>> GetTodo([FromRoute] int id)
     {
         var todo = await _todoRepository.GetTodoByIdAsync(id);
-        if (todo is null) return NotFound("Todo not fount");
+        if (todo is null) return NotFound("Todo not found");
 
         return Ok(todo);
     }
@@ -40,14 +40,14 @@ public class TodosController : ControllerBase
         return CreatedAtAction(nameof(GetTodo), new { id = todoDto.Id }, todoDto);
     }
 
-    [HttpPost("{id:int}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateTodo([FromRoute] int id, [FromBody] UpdateTodoDto dto)
     {
         if (id != dto.Id) return BadRequest("The id in route and body is not same");
 
         var existingTodo = await _todoRepository.FindTodoByIdAsync(id);
 
-        if (existingTodo is null) return BadRequest("Todo not found");
+        if (existingTodo is null) return NotFound("Todo not found");
 
         existingTodo.Title = dto.Title;
         existingTodo.Description = dto.Description;
