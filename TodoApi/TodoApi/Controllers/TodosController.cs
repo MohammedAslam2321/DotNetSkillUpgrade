@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TodoApi.Dtos;
+using TodoApi.Helpers;
 using TodoApi.Mapping;
 using TodoApi.Repositories.Interfaces;
 
@@ -18,9 +19,9 @@ public class TodosController : ControllerBase
 
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TodoDto>>> GetTodos()
+    public async Task<ActionResult<IEnumerable<TodoDto>>> GetTodos([FromQuery] QueryObject query)
     {
-        return Ok( await _todoRepository.GetAllTodosAsync());
+        return Ok( await _todoRepository.GetAllTodosAsync(query));
     }
 
     [HttpGet("{id:int}")]

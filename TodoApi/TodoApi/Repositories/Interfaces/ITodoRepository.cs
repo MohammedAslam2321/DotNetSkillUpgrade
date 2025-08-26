@@ -1,11 +1,12 @@
 ﻿using TodoApi.Dtos;
 using TodoApi.Entities;
+using TodoApi.Helpers;
 
 namespace TodoApi.Repositories.Interfaces;
 
 public interface ITodoRepository
 {
-    Task<IEnumerable<TodoDto>> GetAllTodosAsync();
+    Task<IEnumerable<TodoDto>> GetAllTodosAsync(QueryObject query);
 
     Task<TodoDto?> GetTodoByIdAsync(int id);
 

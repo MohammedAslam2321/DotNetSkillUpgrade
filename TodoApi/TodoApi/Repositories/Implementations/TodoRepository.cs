@@ -2,6 +2,7 @@
 using TodoApi.Data;
 using TodoApi.Dtos;
 using TodoApi.Entities;
+using TodoApi.Helpers;
 using TodoApi.Mapping;
 using TodoApi.Repositories.Interfaces;
 
@@ -23,9 +24,28 @@ public class TodoRepository : ITodoRepository
         return entity.ToTodoDto();
     }
 
-    public async Task<IEnumerable<TodoDto>> GetAllTodosAsync()
+    public async Task<IEnumerable<TodoDto>> GetAllTodosAsync(QueryObject query)
     {
-        var todos = await _context.Todos.AsNoTracking().ToListAsync();
+        var todoQuery = _context.Todos.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(query.Title))
+        {
+            todoQuery = todoQuery.Where(t => t.Title.Contains(query.Title));
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.SortBy))
+        {
+            if (query.SortBy.Equals("duedate", StringComparison.OrdinalIgnoreCase))
+            {
+                todoQuery = query.IsDescending ? todoQuery.OrderByDescending(t => t.DueDate) : todoQuery.OrderBy(t => t.DueDate);
+            }
+        }
+
+        var skipNumber = (query.PageNumber - 1) * query.PageSize;
+        todoQuery = todoQuery.Skip(skipNumber).Take(query.PageSize);
+
+        var todos = await todoQuery.ToListAsync();
+
         return todos.Select(todo => todo.ToTodoDto());
     }
 
